@@ -1,0 +1,88 @@
+2.1 PROGRAM:
+
+```sh
+if [ $# -ne 3 ]
+then
+    echo "Invalid number of arguments"
+    exit
+fi
+
+c=`cat $1 | wc -l`
+
+if [ $2 -le 0 -o $3 -le 0 -o $2 -gt $3 -o $3 -gt $c ]
+then
+    echo "Invalid input"
+    exit
+fi
+
+sed -n "$2,$3 p" $1
+```
+
+OUTPUT:
+
+```sh
+$ sh program.sh file.txt 2 4
+Line 2
+Line 3
+Line 4
+```
+
+---
+
+2.2 PROGRAM:
+
+```sh
+read n
+for ((i=0;i<n;i++))
+do
+    read country[$i]
+done
+
+for ((i=0;i<n;i++))
+do
+    country[$i]=".${country[$i]:1}"
+done
+
+echo "${country[@]}"
+```
+
+OUTPUT:
+
+```sh
+Input:
+3
+India
+Japan
+USA
+
+Output:
+.ndia .apan .SA
+```
+
+---
+
+2.3 PROGRAM:
+
+```sh
+read x
+read y
+
+echo $(($x + $y))
+echo $(($x - $y))
+echo $(($x * $y))
+echo $(($x / $y))
+```
+
+OUTPUT:
+
+```sh
+Input:
+10
+5
+
+Output:
+15
+5
+50
+2
+```

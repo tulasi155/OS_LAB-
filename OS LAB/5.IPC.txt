@@ -1,0 +1,113 @@
+5.1 PROGRAM:
+
+```c id="9g3k1a"
+#include <stdio.h>
+#include <stdlib.h>
+#include <unistd.h>
+#include <sys/shm.h>
+#include <string.h>
+
+int main()
+{
+    void *shared_memory;
+    char buffer[100];
+    int shmid;
+
+    shmid = shmget((key_t)2345, 1024, 0666 | IPC_CREAT);
+
+    shared_memory = shmat(shmid, NULL, 0);
+
+    printf("Enter data to write: ");
+    fgets(buffer, sizeof(buffer), stdin);
+
+    strcpy((char *)shared_memory, buffer);
+
+    printf("You wrote: %s\n", (char *)shared_memory);
+
+    return 0;
+}
+```
+
+OUTPUT:
+
+```plaintext id="x9d3nq"
+Enter data to write: Hello OS Lab
+You wrote: Hello OS Lab
+```
+
+---
+
+5.2 PROGRAM:
+
+```c id="p4k7z2"
+#include <stdio.h>
+#include <unistd.h>
+#include <string.h>
+#include <stdlib.h>
+#include <sys/types.h>
+#include <sys/wait.h>
+
+int main()
+{
+    int fd1[2], fd2[2];
+    pid_t pid;
+    char filename[50], ch;
+    FILE *fp;
+
+    pipe(fd1);
+    pipe(fd2);
+
+    pid = fork();
+
+    if (pid == 0)
+    {
+        close(fd1[1]);
+        read(fd1[0], filename, sizeof(filename));
+
+        fp = fopen(filename, "r");
+
+        close(fd2[0]);
+
+        while ((ch = fgetc(fp)) != EOF)
+        {
+            write(fd2[1], &ch, 1);
+        }
+
+        fclose(fp);
+        close(fd2[1]);
+    }
+    else
+    {
+        close(fd1[0]);
+
+        printf("Enter file name: ");
+        scanf("%s", filename);
+
+        write(fd1[1], filename, strlen(filename) + 1);
+
+        wait(NULL);
+
+        close(fd2[1]);
+
+        printf("File contents:\n");
+
+        while (read(fd2[0], &ch, 1) > 0)
+        {
+            printf("%c", ch);
+        }
+
+        close(fd2[0]);
+    }
+
+    return 0;
+}
+```
+
+OUTPUT:
+
+```plaintext id="3z2l7h"
+Enter file name: test.txt
+File contents:
+Operating Systems Lab
+IPC using Pipes
+```

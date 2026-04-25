@@ -1,0 +1,83 @@
+USE CASE 2: Shortest Job First (SJF Scheduling)
+
+PROGRAM (sjf.c):
+
+```c id="sjf92a"
+#include <stdio.h>
+
+int main()
+{
+    int n, i, j;
+    printf("Enter number of processes: ");
+    scanf("%d", &n);
+
+    int bt[n], wt[n], tat[n], p[n];
+
+    for(i = 0; i < n; i++)
+    {
+        printf("Enter burst time for P%d: ", i+1);
+        scanf("%d", &bt[i]);
+        p[i] = i+1;
+    }
+
+    // Sorting based on burst time
+    for(i = 0; i < n; i++)
+    {
+        for(j = i+1; j < n; j++)
+        {
+            if(bt[i] > bt[j])
+            {
+                int temp = bt[i];
+                bt[i] = bt[j];
+                bt[j] = temp;
+
+                temp = p[i];
+                p[i] = p[j];
+                p[j] = temp;
+            }
+        }
+    }
+
+    wt[0] = 0;
+    for(i = 1; i < n; i++)
+        wt[i] = wt[i-1] + bt[i-1];
+
+    for(i = 0; i < n; i++)
+        tat[i] = wt[i] + bt[i];
+
+    printf("\nProcess\tBT\tWT\tTAT\n");
+    for(i = 0; i < n; i++)
+        printf("P%d\t%d\t%d\t%d\n", p[i], bt[i], wt[i], tat[i]);
+
+    float avg_wt = 0, avg_tat = 0;
+    for(i = 0; i < n; i++)
+    {
+        avg_wt += wt[i];
+        avg_tat += tat[i];
+    }
+
+    printf("\nAverage Waiting Time = %.2f", avg_wt/n);
+    printf("\nAverage Turnaround Time = %.2f\n", avg_tat/n);
+
+    return 0;
+}
+```
+
+OUTPUT:
+
+```plaintext id="sjfout1"
+Enter number of processes: 4
+Enter burst time for P1: 6
+Enter burst time for P2: 8
+Enter burst time for P3: 7
+Enter burst time for P4: 3
+
+Process BT WT TAT
+P4      3  0   3
+P1      6  3   9
+P3      7  9  16
+P2      8 16  24
+
+Average Waiting Time = 7.00
+Average Turnaround Time = 13.00
+```

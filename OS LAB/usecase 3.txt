@@ -1,0 +1,91 @@
+USE CASE 3: Worst Fit Memory Allocation
+
+PROGRAM (worst_fit.c):
+
+```c id="wf7x21"
+#include <stdio.h>
+
+int main()
+{
+    int nb, np, i, j;
+
+    printf("Enter number of memory blocks: ");
+    scanf("%d", &nb);
+
+    int block[nb];
+    for(i = 0; i < nb; i++)
+    {
+        printf("Enter size of block %d: ", i+1);
+        scanf("%d", &block[i]);
+    }
+
+    printf("Enter number of processes: ");
+    scanf("%d", &np);
+
+    int process[np];
+    for(i = 0; i < np; i++)
+    {
+        printf("Enter size of process %d: ", i+1);
+        scanf("%d", &process[i]);
+    }
+
+    int allocation[np];
+    for(i = 0; i < np; i++)
+        allocation[i] = -1;
+
+    for(i = 0; i < np; i++)
+    {
+        int worstIdx = -1;
+
+        for(j = 0; j < nb; j++)
+        {
+            if(block[j] >= process[i])
+            {
+                if(worstIdx == -1 || block[j] > block[worstIdx])
+                    worstIdx = j;
+            }
+        }
+
+        if(worstIdx != -1)
+        {
+            allocation[i] = worstIdx;
+            block[worstIdx] -= process[i];
+        }
+    }
+
+    printf("\nProcess No\tProcess Size\tBlock No\n");
+    for(i = 0; i < np; i++)
+    {
+        printf("%d\t\t%d\t\t", i+1, process[i]);
+        if(allocation[i] != -1)
+            printf("%d\n", allocation[i] + 1);
+        else
+            printf("Not Allocated\n");
+    }
+
+    return 0;
+}
+```
+
+OUTPUT:
+
+```plaintext id="wfout1"
+Enter number of memory blocks: 5
+Enter size of block 1: 100
+Enter size of block 2: 500
+Enter size of block 3: 200
+Enter size of block 4: 300
+Enter size of block 5: 600
+
+Enter number of processes: 4
+Enter size of process 1: 212
+Enter size of process 2: 417
+Enter size of process 3: 112
+Enter size of process 4: 426
+
+Process No  Process Size  Block No
+1           212           5
+2           417           2
+3           112           5
+4           426           Not Allocated
+```

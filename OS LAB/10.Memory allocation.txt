@@ -1,0 +1,82 @@
+PROGRAM (first_fit.c):
+
+```c id="m1f9k2"
+#include <stdio.h>
+
+int main()
+{
+    int nb, np, i, j;
+
+    printf("Enter number of memory blocks: ");
+    scanf("%d", &nb);
+
+    int block[nb];
+    for(i = 0; i < nb; i++)
+    {
+        printf("Enter size of block %d: ", i+1);
+        scanf("%d", &block[i]);
+    }
+
+    printf("Enter number of processes: ");
+    scanf("%d", &np);
+
+    int process[np];
+    for(i = 0; i < np; i++)
+    {
+        printf("Enter size of process %d: ", i+1);
+        scanf("%d", &process[i]);
+    }
+
+    int allocation[np];
+    for(i = 0; i < np; i++)
+        allocation[i] = -1;
+
+    for(i = 0; i < np; i++)
+    {
+        for(j = 0; j < nb; j++)
+        {
+            if(block[j] >= process[i])
+            {
+                allocation[i] = j;
+                block[j] -= process[i];
+                break;
+            }
+        }
+    }
+
+    printf("\nProcess No\tProcess Size\tBlock No\n");
+    for(i = 0; i < np; i++)
+    {
+        printf("%d\t\t%d\t\t", i+1, process[i]);
+        if(allocation[i] != -1)
+            printf("%d\n", allocation[i] + 1);
+        else
+            printf("Not Allocated\n");
+    }
+
+    return 0;
+}
+```
+
+OUTPUT (output.txt):
+
+```plaintext id="o2x7k1"
+Enter number of memory blocks: 5
+Enter size of block 1: 100
+Enter size of block 2: 50
+Enter size of block 3: 30
+Enter size of block 4: 120
+Enter size of block 5: 35
+
+Enter number of processes: 4
+Enter size of process 1: 40
+Enter size of process 2: 10
+Enter size of process 3: 30
+Enter size of process 4: 60
+
+Process No  Process Size  Block No
+1           40            1
+2           10            1
+3           30            2
+4           60            4
+```
